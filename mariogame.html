@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mario Game</title>
+    <style>
+        body,
+        html {
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to top, #6ec6ff, #2196f3);
+        }
+
+        canvas {
+            background: linear-gradient(to top, #6ec6ff, #2196f3);
+            display: none;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #pauseButton {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        #menu {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #222;
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            width: 300px;
+        }
+
+        #menu h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        #menu label,
+        #menu input,
+        #menu button {
+            display: block;
+            margin: 10px auto;
+            width: 100%;
+        }
+
+        #menu input[type="color"] {
+            width: 60px;
+            height: 40px;
+            border: none;
+            cursor: pointer;
+        }
+
+        #menu button {
+            padding: 12px 24px;
+            font-size: 18px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s;
+        }
+
+        #menu button:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        #pauseMenu {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #333;
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            display: none;
+            width: 300px;
+        }
+
+        #pauseMenu h2 {
+            margin-bottom: 30px;
+            font-size: 26px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        #pauseMenu button {
+            margin: 10px auto;
+            padding: 12px 24px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+            width: 100%;
+            background-color: #007bff;
+        }
+
+        #pauseMenu button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- MENU INICIAL -->
+    <div id="menu">
+        <h1>Mario Game</h1>
+        <label for="marioColor">Escolha a cor do Mario:</label>
+        <input type="color" id="marioColor" value="#ff0000">
+        <button onclick="startGame()">Iniciar Jogo</button>
+    </div>
+
+    <!-- MENU DE PAUSA -->
+    <div id="pauseMenu">
+        <h2>Jogo Pausado</h2>
+        <button onclick="resumeGame()">Continuar Jogo</button>
+        <button onclick="goToMenu()">Voltar à Tela Inicial</button>
+    </div>
+
+    <!-- BOTÃO DE PAUSA -->
+    <button id="pauseButton">Pausar</button>
+
+    <!-- CANVAS -->
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let mario;
+        let obstacle;
+        let coin;
+        let gravity = 0.9;
+        let jumpPower = -15;
+        let ground = canvas.height - 100;
+        let gameOver = false;
+        let paused = false;
+        let startTime;
+        let bestScore = localStorage.getItem("bestScore") || 0;
+        let bestTime = localStorage.getItem("bestTime") || 0;
+
+        function initGame(marioColor) {
+            mario = {
+                x: 50,
+                y: canvas.height - 150,
+                radius: 30,
+                color: marioColor,
+                velY: 0,
+                velX: 0,
+                speed: 7,
+                jumping: false,
+                score: 0
+            };
+
+            obstacle = {
+                x: canvas.width,
+                y: canvas.height - 150,
+                width: 50,
+                height: 50,
+                color: "green",
+                speed: 6
+            };
+
+            coin = {
+                x: obstacle.x + 25,
+                y: obstacle.y - 70,
+                radius: 20,
+                color: "yellow",
+                collected: false
+            };
+
+            gameOver = false;
+            paused = false;
+            startTime = Date.now();
+        }
+
+        function drawMario() {
+            ctx.fillStyle = mario.color;
+            ctx.beginPath();
+            ctx.arc(mario.x, mario.y, mario.radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = "black";
+            ctx.beginPath();
+            ctx.arc(mario.x + 10, mario.y - 10, 5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawObstacle() {
+            ctx.fillStyle = obstacle.color;
+            ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        }
+
+        function drawCoin() {
+            if (!coin.collected) {
+                ctx.fillStyle = coin.color;
+                ctx.beginPath();
+                ctx.arc(coin.x, coin.y, coin.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function drawGround() {
+            ctx.fillStyle = "brown";
+            ctx.fillRect(0, ground, canvas.width, 100);
+        }
+
+        function drawHUD() {
+            let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+            ctx.fillStyle = "white";
+            ctx.font = "24px Arial";
+            ctx.fillText("Pontuação: " + mario.score, 20, 40);
+            ctx.fillText("Recorde: " + bestScore, 20, 70);
+        }
+
+        function update() {
+            if (gameOver || paused) return;
+
+            mario.y += mario.velY;
+            mario.velY += gravity;
+            mario.x += mario.velX;
+
+            if (mario.y >= ground - mario.radius) {
+                mario.y = ground - mario.radius;
+                mario.jumping = false;
+            }
+
+            obstacle.x -= obstacle.speed;
+            if (obstacle.x + obstacle.width < 0) {
+                obstacle.x = canvas.width;
+                coin.x = obstacle.x + 25;
+                coin.collected = false;
+            }
+
+            if (mario.x < 0) mario.x = 0;
+            if (mario.x + mario.radius > canvas.width) mario.x = canvas.width - mario.radius;
+
+            if (mario.x < obstacle.x + obstacle.width &&
+                mario.x + mario.radius > obstacle.x &&
+                mario.y < obstacle.y + obstacle.height &&
+                mario.y + mario.radius > obstacle.y) {
+                gameOver = true;
+                let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+                if (mario.score > bestScore) {
+                    bestScore = mario.score;
+                    localStorage.setItem("bestScore", bestScore);
+                }
+                if (elapsedTime > bestTime) {
+                    bestTime = elapsedTime;
+                    localStorage.setItem("bestTime", bestTime);
+                }
+                alert("Game Over!");
+                location.reload();
+            }
+
+            if (!coin.collected && Math.abs(mario.x - coin.x) < mario.radius && Math.abs(mario.y - coin.y) < mario.radius) {
+                mario.score += 10;
+                coin.collected = true;
+            }
+        }
+
+        function gameLoop() {
+            if (paused || gameOver) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGround();
+            drawMario();
+            drawObstacle();
+            drawCoin();
+            drawHUD();
+            update();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function startGame() {
+            const selectedColor = document.getElementById("marioColor").value;
+            document.getElementById("menu").style.display = "none";
+            document.getElementById("pauseButton").style.display = "block";
+            canvas.style.display = "block";
+            initGame(selectedColor);
+            gameLoop();
+        }
+
+        function resumeGame() {
+            paused = false;
+            document.getElementById("pauseMenu").style.display = "none";
+            gameLoop();
+        }
+
+        function goToMenu() {
+            window.location.href = 'index.html'; // Redireciona para o arquivo index.html
+        }
+
+        document.getElementById("pauseButton").addEventListener("click", function () {
+            paused = !paused;
+            this.textContent = paused ? "Continuar" : "Pausar";
+            if (!paused) gameLoop();
+            else document.getElementById("pauseMenu").style.display = "block";
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.code === "ArrowUp" && !mario.jumping) {
+                mario.velY = jumpPower;
+                mario.jumping = true;
+            }
+            if (event.code === "ArrowRight") {
+                mario.velX = mario.speed;
+            }
+            if (event.code === "ArrowLeft") {
+                mario.velX = -mario.speed;
+            }
+        });
+
+        document.addEventListener("keyup", function (event) {
+            if (event.code === "ArrowRight" || event.code === "ArrowLeft") {
+                mario.velX = 0;
+            }
+        });
+    </script>
+</body>
+
+</html>

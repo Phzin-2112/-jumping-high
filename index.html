@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Inicial</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to top, #6ec6ff, #2196f3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .menu-container {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #ffffff;
+            font-size: 36px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        a.button,
+        button {
+            display: block;
+            margin: 15px auto;
+            padding: 14px 28px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            background-color: #3f51b5;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        a.button:hover,
+        button:hover {
+            background-color: #303f9f;
+            transform: translateY(-3px);
+        }
+
+        a.button:active,
+        button:active {
+            transform: translateY(1px);
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 20px;
+            color: #ffffff;
+            font-size: 18px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            background-color: #f4f4f4;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="menu-container">
+        <h1>Menu Inicial</h1>
+
+        <a href="mariogame.html" class="button">1 Jogador</a>
+        <a href="mariano2.html" class="button">2 Jogadores</a>
+
+    </div>
+
+    <script>
+        function startGame() {
+            const p1Color = document.getElementById("player1Color").value;
+            const p2Color = document.getElementById("player2Color").value;
+
+            // Você pode salvar as cores no localStorage ou query string para usar no jogo
+            localStorage.setItem("player1Color", p1Color);
+            localStorage.setItem("player2Color", p2Color);
+
+            // Redireciona para o jogo de 2 jogadores
+            window.location.href = "mariano2.html";
+        }
+    </script>
+</body>
+
+</html>
