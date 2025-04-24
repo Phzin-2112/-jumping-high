@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Inicial</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #74ebd5, #acb6e5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .menu-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        a.button,
+        button {
+            display: block;
+            margin: 15px auto;
+            padding: 12px 25px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        a.button:hover,
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="menu-container">
+        <h1>Menu Inicial</h1>
+
+        <a href="mariogame.html" class="button">1 Jogador</a>
+        <a href="mariano2.html" class="button">2 Jogadores</a>
+
+    </div>
+    </div>
+
+    <script>
+        function startGame() {
+            const p1Color = document.getElementById("player1Color").value;
+            const p2Color = document.getElementById("player2Color").value;
+
+            // Você pode salvar as cores no localStorage ou query string para usar no jogo
+            localStorage.setItem("player1Color", p1Color);
+            localStorage.setItem("player2Color", p2Color);
+
+            // Redireciona para o jogo de 2 jogadores
+            window.location.href = "mariano2.html";
+        }
+    </script>
+</body>
+
+</html>
