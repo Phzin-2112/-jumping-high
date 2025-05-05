@@ -225,6 +225,7 @@
         function drawObstacle() {
             ctx.fillStyle = obstacle.color;
             ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            ctx.fillRect(obstacle.x+1000, obstacle.y, obstacle.width+100, obstacle.height);
         }
 
         function drawCoin() {
