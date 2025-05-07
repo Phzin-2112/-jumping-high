@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mario Game Duo</title>
+  <title>Jumping High Duo</title>
   <style>
     body,
     html {
@@ -151,17 +151,23 @@
       border-radius: 10px;
       cursor: pointer;
     }
+    #imgt{
+      align-items: center;
+      justify-content: center;
+      padding: 200px;
+    }
   </style>
 </head>
 
 <body>
   <div id="colorMenu">
     <h2>Escolha a Cor dos Jogadores</h2>
-    <label for="p1Color">Cor Jogador 1:</label>
+    <label for="p1Color">Cor Player 1:</label>
     <input type="color" id="p1Color" value="#ff0000"><br><br>
-    <label for="p2Color">Cor Jogador 2:</label>
+    <label for="p2Color">Cor Player 2:</label>
     <input type="color" id="p2Color" value="#0000ff"><br><br>
     <button onclick="startGame()">Iniciar Jogo</button>
+    <button onclick="goToMainMenu()" id="imgt"> <img src="favicon-32x32.png" width="20px"></button>
   </div>
 
   <button id="pauseButton">Pausar</button>
